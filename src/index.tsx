@@ -149,6 +149,8 @@ function UseWalletProvider({
   const [error, setError] = useState<Error | null>(null)
   const [type, setType] = useState<AccountType | null>(null)
   const [status, setStatus] = useState<Status>('disconnected')
+  const [walletConnectUri, setWalletConnectUri] = useState<string | null>(null)
+  const [web3Connector, setWeb3Connector] = useState<any>()
   const web3ReactContext = useWeb3React()
   const activationId = useRef<number>(0)
   const {
@@ -172,11 +174,29 @@ function UseWalletProvider({
     [web3ChainId]
   )
 
+  useEffect(() => {
+    if (connector === 'shinobiwallet' && web3Connector) {
+      web3Connector.on('URI_AVAILABLE', (payload: string) => {
+        console.log(payload)
+        setWalletConnectUri(payload)
+      })
+    }
+
+    return () => {
+      if (connector === 'shinobiwallet' && web3Connector) {
+        web3Connector.off('URI_AVAILABLE', () => {
+          setWalletConnectUri(null)
+        })
+      }
+    }
+  }, [web3Connector, connector])
+
   const reset = useCallback(() => {
     if (web3ReactContext.active) {
       web3ReactContext.deactivate()
     }
     clearLastActiveAccount()
+    setWeb3Connector(null)
     setConnector(null)
     setError(null)
     setStatus('disconnected')
@@ -228,6 +248,8 @@ function UseWalletProvider({
         setError(new ConnectorUnsupportedError(connectorId))
         return
       }
+
+      setWeb3Connector(web3ReactConnector)
 
       try {
         // TODO: there is no way to prevent an activation to complete, but we
@@ -338,6 +360,7 @@ function UseWalletProvider({
       reset,
       status,
       type,
+      walletConnectUri,
     }),
     [
       account,
@@ -352,6 +375,7 @@ function UseWalletProvider({
       reset,
       status,
       web3ReactContext,
+      walletConnectUri,
     ]
   )
 

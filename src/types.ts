@@ -53,6 +53,7 @@ export type Wallet = {
   reset: () => void
   status: Status
   type: AccountType | null
+  walletConnectUri: string | null
 }
 
 type EthereumProviderEip1193 = {
