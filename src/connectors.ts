@@ -6,6 +6,7 @@ import initPortis from './connectors/ConnectorPortis'
 import initProvided from './connectors/ConnectorProvided'
 import initTorus from './connectors/ConnectorTorus'
 import initWalletConnect from './connectors/ConnectorWalletConnect'
+import initShinobiWallet from './connectors/ConnectorShinobiWallet'
 import initWalletLink from './connectors/ConnectorWalletLink'
 import initLedger from './connectors/ConnectorLedger'
 
@@ -22,6 +23,7 @@ export function getConnectors(
     provided: [initProvided, null],
     torus: [initTorus, null],
     walletconnect: [initWalletConnect, null],
+    shinobiwallet: [initShinobiWallet, null],
     walletlink: [initWalletLink, null],
     ledger: [initLedger, null],
   }
@@ -35,6 +37,10 @@ export function getConnectors(
 
     // Otherwise it is a config
     if (connectors[id]) {
+      if (id === 'walletconnect') {
+        connectors['shinobiwallet'][1] = initOrConfig as ConnectorConfig
+      }
+
       connectors[id][1] = initOrConfig as ConnectorConfig
     }
   }
