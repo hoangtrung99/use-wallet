@@ -175,21 +175,13 @@ function UseWalletProvider({
   )
 
   useEffect(() => {
-    if (connector === 'shinobiwallet' && web3Connector) {
+    if (web3Connector) {
       web3Connector.on('URI_AVAILABLE', (payload: string) => {
         console.log(payload)
         setWalletConnectUri(payload)
       })
     }
-
-    return () => {
-      if (connector === 'shinobiwallet' && web3Connector) {
-        web3Connector.off('URI_AVAILABLE', () => {
-          setWalletConnectUri(null)
-        })
-      }
-    }
-  }, [web3Connector, connector])
+  }, [web3Connector, connector, walletConnectUri])
 
   const reset = useCallback(() => {
     if (web3ReactContext.active) {
@@ -269,6 +261,7 @@ function UseWalletProvider({
         }
         setStatus('connected')
       } catch (err) {
+        console.log(err)
         // Don’t throw if another connection has happened in the meantime.
         if (id !== activationId.current) {
           return
