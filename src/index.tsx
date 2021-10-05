@@ -197,6 +197,7 @@ function UseWalletProvider({
     }
     clearLastActiveAccount()
     setWeb3Connector(null)
+    setWalletConnectUri(null)
     setConnector(null)
     setError(null)
     setStatus('disconnected')
